@@ -1,0 +1,151 @@
+{
+  "permissions": {
+    "file_operations": {
+      "read": true,
+      "write": true,
+      "create": true,
+      "modify": true
+    },
+    "allowed_tools": [
+      "Read",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "TodoWrite",
+      "Bash",
+      "Task"
+    ]
+  },
+  "hooks": {
+    "pre-session": ".claude/hooks/pre-session.sh",
+    "post-task": ".claude/hooks/post-task.sh",
+    "PreToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/pre-specialist.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-specialist.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "environment": {
+    "RCA_PANEL_ROOT": ".",
+    "RCA_TEMPLATES_DIR": "./templates",
+    "INVESTIGATIONS_DIR": "./investigations/active"
+  },
+  "validation": {
+    "require_investigation_id": true,
+    "require_evidence_ledger": true,
+    "require_causal_hypothesis_register": true,
+    "require_disconfirmation_before_actions": true
+  },
+  "project_type": "root_cause_investigation_panel",
+  "workflow_enforcement": "phase_based",
+  "phase_configurations": {
+    "case_framing": {
+      "description": "Define event, consequence, boundary, evidence inventory, uncertainty, recurrence question, and action authority",
+      "required_documents": [
+        "intake.md"
+      ],
+      "completion_trigger": "case_frame_validated"
+    },
+    "evidence_sequence": {
+      "description": "Build evidence ledger and timeline/change model",
+      "required_documents": [
+        "evidence-ledger.md",
+        "timeline.md"
+      ],
+      "completion_trigger": "evidence_and_sequence_validated"
+    },
+    "method_stack": {
+      "description": "Select and revise a provisional method stack",
+      "required_documents": [
+        "method-stack.md"
+      ],
+      "completion_trigger": "method_stack_selected"
+    },
+    "causal_analysis": {
+      "description": "Run selected methods as instruments and maintain causal hypotheses",
+      "required_documents": [
+        "causal-hypotheses.md"
+      ],
+      "completion_trigger": "hypotheses_reviewed"
+    },
+    "disconfirmation": {
+      "description": "Challenge leading hypotheses and resolve material evidence gaps",
+      "required_documents": [
+        "disconfirmation.md",
+        "evidence-gaps.md"
+      ],
+      "completion_trigger": "disconfirmation_complete"
+    },
+    "synthesis_actions": {
+      "description": "Produce causal synthesis, corrective actions, and learning review",
+      "required_documents": [
+        "causal-synthesis.md",
+        "corrective-actions.md",
+        "learning-review.md"
+      ],
+      "completion_trigger": "actions_mapped_to_causes"
+    }
+  },
+  "specialists": {
+    "investigation_lead": {
+      "name": "Dr. Miriam Adler",
+      "focus": "Scope, phase discipline, causal humility, user checkpoints"
+    },
+    "evidence_steward": {
+      "name": "Prof. Aiko Mori",
+      "focus": "Provenance, confidence, contradictions, unsupported claims"
+    },
+    "timeline_change": {
+      "name": "Kenji Takahashi",
+      "focus": "Sequence, deltas, transitions, last-known-good states"
+    },
+    "systems_human_factors": {
+      "name": "Dr. Ingrid Rasmussen",
+      "focus": "Local rationality, work design, incentives, workload, interfaces"
+    },
+    "fault_logic": {
+      "name": "Dr. Eleanor Watson",
+      "focus": "Necessary conditions, dependency paths, common-cause failures"
+    },
+    "control_structure": {
+      "name": "Dr. Amelia Levenson",
+      "focus": "Feedback, constraints, unsafe control actions, observability"
+    },
+    "corrective_action": {
+      "name": "Marcus Reed",
+      "focus": "Control strength, action mechanism, owner authority, verification"
+    },
+    "challenger": {
+      "name": "Samira Qureshi",
+      "focus": "Alternative explanations, disconfirmation, overfit narratives"
+    }
+  },
+  "domain_overlays": {
+    "software_sre": "Maya Srinivasan",
+    "security": "Talia Ben-Ami",
+    "healthcare": "Dr. Sofia Alvarez",
+    "manufacturing_operations": "Hiroshi Watanabe",
+    "finance_risk": "Nadia El-Masri",
+    "organizational_process": "Grace Okonkwo",
+    "product_growth": "Elena Petrescu",
+    "household_personal": "Marisol Vega"
+  }
+}
+
