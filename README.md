@@ -183,7 +183,44 @@ Before recommending actions, ask:
 - Where is sequence being mistaken for causation?
 - Where are we overfitting to the user's first story?
 
-### 6. Pressure-test across domains
+### 6. Use two-agent tmux mode for code problems
+
+For implementation work, the most effective operating mode is often a two-agent
+tmux loop:
+
+1. The implementation agent stays in the product/code session and represents the
+   user, system owner, and current implementation context.
+2. A second tmux pane/session starts an RCA panel agent with this repo or the
+   `root-cause-investigation` skill.
+3. The implementation agent sends the incident brief, observed evidence,
+   suspected fix, open questions, and target repo/files to the panel.
+4. The RCA panel asks focused follow-up questions, challenges the causal model,
+   identifies evidence gaps, and returns implementation-control feedback.
+5. The implementation agent converts that feedback into tests, WorkGraph tasks,
+   code changes, or validation gates.
+
+Use tmux transport directly when helpful:
+
+```bash
+tmux send-keys -t <session>:<window>.<pane> "<RCA panel prompt>" Enter
+tmux capture-pane -p -t <session>:<window>.<pane> | tail -120
+```
+
+The panel output must be consumable by the initiating agent. Prefer writing an
+artifact such as `agent-handoff.md` in the investigation folder, or returning a
+copyable handoff block in the pane. The handoff should include:
+
+- claims and evidence classes
+- owner surfaces, ideally repo/file/function when known
+- gate level: `unit`, `scenario`, `live-browser`, `audit`, or `manual`
+- required artifact fields to persist or inspect
+- pass/fail conditions and residual risks
+- model-mediated boundary notes when semantic judgment is involved
+
+This mode keeps the implementation agent in the code path while giving the RCA
+panel enough independence to challenge assumptions before the fix hardens.
+
+### 7. Pressure-test across domains
 
 Use `evals/cross-domain-cases.json` to test whether the panel preserves the same RCA kernel while adapting domain evidence and controls. The included cases cover insufficient intake, software contract boundaries, manufacturing traceability, healthcare handoffs, finance approval ledgers, and security identity context.
 
@@ -357,6 +394,7 @@ investigations/active/RCA-YYYY-NNN/
   disconfirmation.md
   field-contract-map.md
   scenario-evidence.md
+  agent-handoff.md
   causal-synthesis.md
   corrective-actions.md
   learning-review.md
