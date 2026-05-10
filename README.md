@@ -43,6 +43,17 @@ claim -> evidence class -> owner surface -> gate level -> command/gate -> requir
 Use this mode when the main agent is actively fixing a code problem and needs an
 independent RCA panel to pressure-test the explanation before the fix hardens.
 
+Example instruction to give the implementation agent:
+
+```text
+You are on tmux window `1.1`. Please spawn a new tmux pane on window `1.2`
+and start a Codex session in yolo mode. Explain the problem we are dealing
+with and ask it to start a Root Cause Analysis Panel. Work with the RCA panel
+agent on the problem until it returns results. Then bring the panel's handoff
+back here with claims, evidence classes, owner surfaces, gate levels, required
+artifact fields, pass/fail conditions, and residual risks.
+```
+
 ## The "Evidence-Mechanism-Action" Architecture
 
 ```text
