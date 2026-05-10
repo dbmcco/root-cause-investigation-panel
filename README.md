@@ -14,7 +14,34 @@ This is a structured causal investigation tool based on root cause analysis, saf
 - **Structured Method Data** - Fishbone, 5 Whys, fault tree, barrier analysis, timeline, change analysis, and STAMP-style work produce hypothesis data, not just prose diagrams
 - **Evidence Gap Loop** - The panel can pause mid-investigation, request specific missing inputs, and resume with amended artifacts
 - **Action Quality Review** - Corrective actions must map to supported causal mechanisms and include verification signals
+- **Two-Agent tmux Mode** - A coding agent can spin up a second tmux pane as the RCA panel, interact with it as the incident owner, and consume a structured handoff for implementation
 - **Anti-Blame Guardrails** - Human error is treated as a symptom label, not an endpoint
+
+## Recommended Mode for Code Problems
+
+For code and agent-system failures, use the RCA panel as a second agent rather
+than as a passive report generator.
+
+The effective pattern is:
+
+1. Keep your implementation agent in the working repo/session.
+2. Start a second tmux pane or session for the RCA panel.
+3. Have the implementation agent describe the incident, current hypothesis,
+   suspected fix, relevant files/repos, evidence, and open questions.
+4. Let the RCA panel challenge the causal model, ask for missing inputs, and
+   return implementation-control feedback.
+5. Feed the panel output back into the implementation agent as tests, WorkGraph
+   tasks, validation gates, or code-review criteria.
+
+The panel should write or return an `agent-handoff.md`-style output that the
+first agent can consume directly:
+
+```text
+claim -> evidence class -> owner surface -> gate level -> command/gate -> required artifact fields -> pass/fail -> residual risk
+```
+
+Use this mode when the main agent is actively fixing a code problem and needs an
+independent RCA panel to pressure-test the explanation before the fix hardens.
 
 ## The "Evidence-Mechanism-Action" Architecture
 
