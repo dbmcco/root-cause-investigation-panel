@@ -22,10 +22,15 @@ This is a structured causal investigation tool based on root cause analysis, saf
 For code and agent-system failures, use the RCA panel as a second agent rather
 than as a passive report generator.
 
+Dependency: the spawned agent should have the `root-cause-investigation` skill
+installed and should start in the same working directory as the implementation
+agent. This keeps panel output discoverable in the repo being fixed rather than
+hidden in a different tmux session or in the panel repository.
+
 The effective pattern is:
 
 1. Keep your implementation agent in the working repo/session.
-2. Start a second tmux pane or session for the RCA panel.
+2. Start a second tmux pane or session for the RCA panel in that same directory.
 3. Have the implementation agent describe the incident, current hypothesis,
    suspected fix, relevant files/repos, evidence, and open questions.
 4. Let the RCA panel challenge the causal model, ask for missing inputs, and
@@ -34,7 +39,13 @@ The effective pattern is:
    tasks, validation gates, or code-review criteria.
 
 The panel should write or return an `agent-handoff.md`-style output that the
-first agent can consume directly:
+first agent can consume directly. Prefer writing it under the working repo:
+
+```text
+./investigations/active/RCA-YYYY-NNN/agent-handoff.md
+```
+
+The implementation-control rows should use this shape:
 
 ```text
 claim -> evidence class -> owner surface -> gate level -> command/gate -> required artifact fields -> pass/fail -> residual risk
@@ -47,11 +58,15 @@ Example instruction to give the implementation agent:
 
 ```text
 You are on tmux window `1.1`. Please spawn a new tmux pane on window `1.2`
-and start a Codex session in yolo mode. Explain the problem we are dealing
-with and ask it to start a Root Cause Analysis Panel. Work with the RCA panel
-agent on the problem until it returns results. Then bring the panel's handoff
-back here with claims, evidence classes, owner surfaces, gate levels, required
-artifact fields, pass/fail conditions, and residual risks.
+in this same directory and start a Codex session in yolo mode. The spawned
+agent should use the installed `root-cause-investigation` skill, not switch
+to a separate repo unless asked. Explain the problem we are dealing with and
+ask it to start a Root Cause Analysis Panel. Work with the RCA panel agent on
+the problem until it returns results. It should write output to
+`./investigations/active/RCA-YYYY-NNN/agent-handoff.md` or return a clearly
+delimited handoff block. Then bring the panel's handoff back here with claims,
+evidence classes, owner surfaces, gate levels, required artifact fields,
+pass/fail conditions, and residual risks.
 ```
 
 ## The "Evidence-Mechanism-Action" Architecture
@@ -432,10 +447,14 @@ investigations/active/RCA-YYYY-NNN/
   disconfirmation.md
   field-contract-map.md
   scenario-evidence.md
+  implementation-control-feedback.md
   agent-handoff.md
   causal-synthesis.md
   corrective-actions.md
   learning-review.md
+  method-analyses/
+  artifacts/
+  conversations/
   metadata.json
 ```
 
