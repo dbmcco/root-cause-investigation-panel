@@ -1,0 +1,243 @@
+{
+  "version": 1,
+  "description": "Cross-domain pressure cases for the root-cause-investigation skill. Each case tests whether the skill preserves evidence/mechanism/action discipline while adapting domain vocabulary, evidence sources, controls, and gates.",
+  "cases": [
+    {
+      "case_id": "insufficient-intake",
+      "domain": "cross-domain",
+      "failure_pattern": "underspecified incident intake",
+      "prompt": "Use the root cause investigation panel. We keep having serious failures in our process and need to know the root cause. Please do the RCA.",
+      "minimum_score": 5,
+      "required_patterns": [
+        {
+          "id": "asks_for_case_frame",
+          "description": "Asks for missing event, consequence, system boundary, evidence, uncertainty, recurrence question, or authority before selecting a method.",
+          "pattern": "(case frame|event definition|consequence|system boundary|evidence inventory|known uncertainty|action authority|minimum missing)"
+        },
+        {
+          "id": "does_not_commit_method",
+          "description": "Treats method choice as provisional or says there is not enough input to choose yet.",
+          "pattern": "(provisional method|not enough|insufficient|before selecting|method choice)"
+        },
+        {
+          "id": "gap_classification",
+          "description": "Classifies missing evidence as blocking, material, or optional.",
+          "pattern": "(blocking|material|optional)"
+        },
+        {
+          "id": "top_missing_inputs",
+          "description": "Requests a small number of decision-relevant missing inputs.",
+          "pattern": "(top three|three inputs|highest-value|decision-relevant|needed because)"
+        }
+      ],
+      "forbidden_patterns": [
+        "definitive root cause",
+        "the root cause is",
+        "5 whys is the best method"
+      ]
+    },
+    {
+      "case_id": "software-contract-boundary",
+      "domain": "software/SRE",
+      "failure_pattern": "identity and evidence context lost across service boundaries",
+      "prompt": "Use the root cause investigation panel. A multi-agent product works in direct chat, but scheduled wake executions sometimes complete in the wrong conversation or without evidence refs. Recent fixes make simple wake pass, but complex multi-tool wakes still produce occasional exact-response failures. Investigate across runtime, workboard, shell delivery, and agent profile boundaries.",
+      "minimum_score": 8,
+      "required_patterns": [
+        {
+          "id": "current_vs_historical",
+          "description": "Separates current defects from historical/fixed observations.",
+          "pattern": "(current|open|fixed|historical|partially fixed|unverified)"
+        },
+        {
+          "id": "field_contract_map",
+          "description": "Maps fields to producers, consumers, owner surfaces, or survival tests.",
+          "pattern": "(field-level|contract map|producer|consumer|survival test|conversation_id|agent_id|evidence refs)"
+        },
+        {
+          "id": "owner_surfaces",
+          "description": "Names file, function, module, route, or interface-level owners where evidence supports it.",
+          "pattern": "(file|function|module|route|interface|owner surface|::)"
+        },
+        {
+          "id": "scenario_evidence_tuple",
+          "description": "Requires machine-readable scenario evidence before accepting a pass.",
+          "pattern": "(scenario evidence tuple|conversation_id|work_session|completion_ref|tool_outcomes|final browser message)"
+        },
+        {
+          "id": "model_mediated_boundary",
+          "description": "Preserves code/model division for semantic fulfillment.",
+          "pattern": "(model-mediated|semantic fulfillment|code validates|evidence refs|schema)"
+        },
+        {
+          "id": "runnable_gates",
+          "description": "Includes runnable gates, commands, artifacts, or pass/fail conditions.",
+          "pattern": "(command|gate|expected artifact|pass/fail|validation)"
+        }
+      ],
+      "forbidden_patterns": [
+        "just use regex",
+        "string extraction in application code",
+        "weak model",
+        "Sam cannot wake"
+      ]
+    },
+    {
+      "case_id": "manufacturing-lot-traceability",
+      "domain": "manufacturing",
+      "failure_pattern": "lot identity and inspection context lost between production and QA",
+      "prompt": "Use the root cause investigation panel. A packaged food line shipped three pallets with incorrect allergen labels. Production records say the labels were correct at line start, QA inspection passed the first case, and the warehouse scan shows the affected pallets share a partial lot code. Maintenance replaced a labeler sensor during the shift. Build an RCA that can guide containment and recurrence prevention.",
+      "minimum_score": 7,
+      "required_patterns": [
+        {
+          "id": "manufacturing_methods",
+          "description": "Uses manufacturing-appropriate methods such as timeline, change analysis, Ishikawa/6M, barrier analysis, or FMEA.",
+          "pattern": "(Ishikawa|fishbone|6M|machine|method|material|measurement|environment|people|FMEA|barrier)"
+        },
+        {
+          "id": "lot_traceability",
+          "description": "Requires lot genealogy, scan records, inspection records, sensor maintenance, or batch evidence.",
+          "pattern": "(lot|batch|pallet|scan|inspection|maintenance|labeler|genealogy|traceability)"
+        },
+        {
+          "id": "containment",
+          "description": "Includes containment, hold, recall scope, or segregation controls.",
+          "pattern": "(containment|hold|quarantine|segregation|recall|scope)"
+        },
+        {
+          "id": "structured_fishbone",
+          "description": "Treats fishbone categories as evidence-tagged hypotheses, not conclusions.",
+          "pattern": "(evidence_for|evidence against|hypothesis|mechanism|confidence|unsupported)"
+        },
+        {
+          "id": "verification_signal",
+          "description": "Defines verification signals for corrective actions.",
+          "pattern": "(verification signal|pass/fail|audit|inspection result|control check)"
+        }
+      ],
+      "forbidden_patterns": [
+        "operator error",
+        "retrain operators",
+        "be more careful"
+      ]
+    },
+    {
+      "case_id": "healthcare-medication-handoff",
+      "domain": "healthcare",
+      "failure_pattern": "medication context lost during patient handoff",
+      "prompt": "Use the root cause investigation panel. A patient received a duplicate anticoagulant dose after transfer from the emergency department to the inpatient floor. The ED note mentioned a held medication, the MAR showed an active order, and the verbal handoff was interrupted twice. No permanent harm occurred, but it was a near miss requiring a safety review.",
+      "minimum_score": 7,
+      "required_patterns": [
+        {
+          "id": "healthcare_methods",
+          "description": "Uses safety timeline, barrier analysis, human factors, Swiss cheese, or just-culture framing.",
+          "pattern": "(timeline|barrier|human factors|Swiss cheese|just culture|near miss|patient safety)"
+        },
+        {
+          "id": "clinical_evidence",
+          "description": "Requires MAR, orders, chart notes, handoff details, staffing/context, or protocol evidence.",
+          "pattern": "(MAR|medication administration record|order|chart|handoff|protocol|interruption|staffing)"
+        },
+        {
+          "id": "anti_blame",
+          "description": "Avoids blaming an individual and treats human action as system context.",
+          "pattern": "(system|work-as-done|human factors|latent condition|control|barrier)"
+        },
+        {
+          "id": "safety_controls",
+          "description": "Identifies prevention/detection/recovery controls.",
+          "pattern": "(prevent|detect|recover|mitigate|double check|reconciliation|alert)"
+        },
+        {
+          "id": "residual_uncertainty",
+          "description": "Separates what is known from disputed or missing evidence.",
+          "pattern": "(uncertainty|missing|disputed|unverified|evidence gap)"
+        }
+      ],
+      "forbidden_patterns": [
+        "nurse error",
+        "doctor error",
+        "just retrain",
+        "human error was the root cause"
+      ]
+    },
+    {
+      "case_id": "finance-approval-ledger",
+      "domain": "finance/operations",
+      "failure_pattern": "approval metadata lost between workflow and payment execution",
+      "prompt": "Use the root cause investigation panel. A vendor payment above the approval threshold was executed without the required second approval visible in the audit package. The workflow tool shows a second approver clicked approve, but the payment ledger has only one approver ID. Reconciliation caught it two days later. Investigate as an operational control failure, not a fraud accusation.",
+      "minimum_score": 7,
+      "required_patterns": [
+        {
+          "id": "finance_controls",
+          "description": "Uses control failure, process map, segregation of duties, reconciliation, or audit trail analysis.",
+          "pattern": "(segregation of duties|approval|audit trail|reconciliation|control failure|process map)"
+        },
+        {
+          "id": "metadata_boundary",
+          "description": "Maps approval metadata from workflow to ledger and audit package.",
+          "pattern": "(metadata|workflow|ledger|audit package|approver ID|producer|consumer|contract)"
+        },
+        {
+          "id": "not_fraud_claim",
+          "description": "Avoids unsupported fraud or intent conclusions.",
+          "pattern": "(not a fraud|unsupported|intent|evidence gap|control)"
+        },
+        {
+          "id": "evidence_tuple",
+          "description": "Requires transaction ID, approver IDs, timestamps, ledger refs, and audit artifacts.",
+          "pattern": "(transaction ID|approver|timestamp|ledger|audit|evidence)"
+        },
+        {
+          "id": "gate",
+          "description": "Defines a replay/reconciliation/control gate.",
+          "pattern": "(replay|reconciliation|gate|pass/fail|expected artifact|control test)"
+        }
+      ],
+      "forbidden_patterns": [
+        "fraud was the root cause",
+        "approve more carefully",
+        "just remind finance"
+      ]
+    },
+    {
+      "case_id": "security-identity-context",
+      "domain": "security",
+      "failure_pattern": "identity context lost between SSO, app session, and audit log",
+      "prompt": "Use the root cause investigation panel. An internal admin action was recorded in the application audit log as service-account, but SSO logs show a named user initiated a session at the same time. There is no evidence of data exfiltration. Security wants to know whether this is an incident, an observability defect, or both, and what controls should prevent recurrence.",
+      "minimum_score": 7,
+      "required_patterns": [
+        {
+          "id": "security_methods",
+          "description": "Uses timeline, attack-path alternative, control mapping, detection/containment, or identity boundary analysis.",
+          "pattern": "(timeline|attack path|identity|session|audit|detection|containment|control)"
+        },
+        {
+          "id": "identity_chain",
+          "description": "Requires SSO logs, app sessions, service-account mapping, audit log, timestamps, or correlation IDs.",
+          "pattern": "(SSO|session|service-account|audit log|timestamp|correlation|identity)"
+        },
+        {
+          "id": "alternative_explanations",
+          "description": "Separates observability defect from security incident hypotheses.",
+          "pattern": "(alternative explanation|observability defect|security incident|hypothesis|disconfirmation)"
+        },
+        {
+          "id": "no_exfil_claim",
+          "description": "Does not overclaim compromise or exfiltration without evidence.",
+          "pattern": "(no evidence|exfiltration|unsupported|confidence|uncertainty)"
+        },
+        {
+          "id": "validation_gate",
+          "description": "Defines correlation/replay/detection validation gates.",
+          "pattern": "(correlation|replay|detection|gate|pass/fail|expected artifact)"
+        }
+      ],
+      "forbidden_patterns": [
+        "confirmed breach",
+        "attacker",
+        "just rotate all keys",
+        "user was malicious"
+      ]
+    }
+  ]
+}

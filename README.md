@@ -183,6 +183,21 @@ Before recommending actions, ask:
 - Where is sequence being mistaken for causation?
 - Where are we overfitting to the user's first story?
 
+### 6. Pressure-test across domains
+
+Use `evals/cross-domain-cases.json` to test whether the panel preserves the same RCA kernel while adapting domain evidence and controls. The included cases cover insufficient intake, software contract boundaries, manufacturing traceability, healthcare handoffs, finance approval ledgers, and security identity context.
+
+Run an agent against one case prompt, save the output, then score the structure:
+
+```bash
+python3 scripts/score-rca-output.py \
+  --cases evals/cross-domain-cases.json \
+  --case-id software-contract-boundary \
+  --output /path/to/agent-output.md
+```
+
+The scorer checks for structural controls such as evidence classification, causal hypotheses, control maps, disconfirmation, corrective actions, domain-specific evidence, falsification gates, and forbidden failure patterns. It is not a semantic judge; use it as a first-pass gate before human review.
+
 ---
 
 ## Recommended Input Documents
@@ -340,6 +355,8 @@ investigations/active/RCA-YYYY-NNN/
   method-analyses/
   evidence-gaps.md
   disconfirmation.md
+  field-contract-map.md
+  scenario-evidence.md
   causal-synthesis.md
   corrective-actions.md
   learning-review.md
